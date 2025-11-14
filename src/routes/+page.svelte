@@ -16,7 +16,8 @@
         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/3 p-2.5 mx-auto"
     />
 
-    <div class="my-6 flex flex-col lg:flex-row">
+    <div class="my-6 flex flex-col gap-2">
+        <!-- //lg:flex-row -->
         <Queue />
         <SongList {filter} />
     </div>

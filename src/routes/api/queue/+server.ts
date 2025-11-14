@@ -1,4 +1,9 @@
-import { dequeueNext, enqueue, getQueue, type TSong } from "$lib/data.svelte";
+import {
+  dequeueNext,
+  enqueue,
+  getQueue,
+  type TSong,
+} from "$lib/server/data.svelte";
 import { json, type RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ url }) => {

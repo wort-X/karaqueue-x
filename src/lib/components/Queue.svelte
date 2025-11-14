@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from "svelte";
     import H2 from "./H2.svelte";
-    import type { SongQueue } from "$lib/data.svelte";
+    import type { SongQueue } from "$lib/server/data.svelte";
 
     let queue: SongQueue = $state([]);
 
@@ -10,7 +10,7 @@
 
         setInterval(async () => {
             queue = await (await fetch("/api/queue")).json();
-        }, 5000);
+        }, 1000);
     });
 
     const currently = $derived(queue.length == 0 ? null : queue[0]);
@@ -24,6 +24,7 @@
         <p>Currently no song is queued</p>
     {:else}
         <div>
+            <img src="/api/songs/cover/test" alt="" />
             <p>
                 <span>{currently.song.title}</span><span
                     >by {currently.song.artist}</span

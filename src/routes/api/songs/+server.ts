@@ -1,4 +1,4 @@
-import { getSongs } from "$lib/data.svelte";
+import { getSongs } from "$lib/server/data.svelte";
 import { json, type Actions, type RequestHandler } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ url }) => {
