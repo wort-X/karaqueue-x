@@ -45,7 +45,6 @@ const make_filter = (filter: string | null) => {
     .split(" ")
     .filter((f) => f.trim().length > 0)
     .map((f) => f.trim());
-  console.log(filters);
   return (title: string, artist: string) => {
     let t = title.toLowerCase();
     let a = artist.toString().toLowerCase();
@@ -64,7 +63,7 @@ export type SongQueue = {
   requestor: string;
 }[];
 
-const queue: SongQueue = $state([]);
+let queue: SongQueue = $state([]);
 
 export const getQueue = () => {
   return queue;
@@ -76,4 +75,8 @@ export const enqueue = (r: { song: TSong; requestor: string }) => {
 
 export const dequeueNext = () => {
   queue.shift();
+};
+
+export const clearQueue = () => {
+  queue = [];
 };

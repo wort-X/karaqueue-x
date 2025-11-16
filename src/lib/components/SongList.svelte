@@ -2,6 +2,7 @@
     import type { TSong, TSongs } from "$lib/server/data.svelte";
     import { onMount } from "svelte";
     import H2 from "./H2.svelte";
+    import SongDisplay from "./SongDisplay.svelte";
 
     function make_duration_format(seconds: number): string {
         let minutes = 0;
@@ -88,7 +89,7 @@
                     <td class="pl-2">{make_duration_format(song.duration)}</td>
                     <td
                         ><button
-                            class="prim cursor-pointer px-1 py-2 rounded-2xl text-white text-xl"
+                            class="prim cursor-pointer px-1 py-2 rounded-2xl text-white text-xl mx-1 my-1"
                             onclick={() => openModal(song)}>Add to queue</button
                         ></td
                     >
@@ -118,13 +119,9 @@
             onclick={() => modal.close()}>X</button
         >
         <H2 class="text-center">Add Song to Queue</H2>
-        <div>
-            <p>
-                <span>{modalSong?.title ?? ""}</span><span
-                    >by {modalSong?.artist ?? ""}</span
-                ><br />
-            </p>
-        </div>
+        {#if modalSong != undefined}
+            <SongDisplay song={modalSong!} cover={true} />
+        {/if}
         <input
             type="text"
             class=" mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block min-w-2/3 p-2.5 mx-auto"

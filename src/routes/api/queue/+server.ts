@@ -1,4 +1,5 @@
 import {
+  clearQueue,
   dequeueNext,
   enqueue,
   getQueue,
@@ -10,8 +11,15 @@ export const GET: RequestHandler = async ({ url }) => {
   return json(getQueue());
 };
 
-export const DELETE: RequestHandler = async ({ url }) => {
-  dequeueNext();
+export const DELETE: RequestHandler = async ({ url, request }) => {
+  let b = await request.text();
+
+  if (b === "clear") {
+    clearQueue();
+  } else {
+    dequeueNext();
+  }
+
   return json(getQueue());
 };
 

@@ -2,6 +2,7 @@
     import { onMount } from "svelte";
     import H2 from "./H2.svelte";
     import type { SongQueue } from "$lib/server/data.svelte";
+    import SongDisplay from "./SongDisplay.svelte";
 
     let queue: SongQueue = $state([]);
 
@@ -10,7 +11,7 @@
 
         setInterval(async () => {
             queue = await (await fetch("/api/queue")).json();
-        }, 1000);
+        }, 500);
     });
 
     const currently = $derived(queue.length == 0 ? null : queue[0]);
@@ -18,29 +19,21 @@
 </script>
 
 <div class="mx-auto bg-white rounded-3xl p-5">
-    <H2>Curently playing</H2>
+    <H2 class="text-center">Curently playing</H2>
 
     {#if currently == null}
-        <p>Currently no song is queued</p>
+        <p class="text-center">Currently no song is queued</p>
     {:else}
-        <div>
-            <img src="/api/songs/cover/test" alt="" />
-            <p>
-                <span>{currently.song.title}</span><span
-                    >by {currently.song.artist}</span
-                ><br /><span>({currently.requestor})</span>
-            </p>
-        </div>
+        <SongDisplay song={currently.song} cover={true} />
+        <p class="italic text-right text-gray-500">({currently.requestor})</p>
     {/if}
 
-    <span class="w-4/5 bg-gray-500 h-px"></span>
+    <div class="w-4/5 bg-gray-500 h-0.5 mx-auto"></div>
 
-    {#each rest as r}
-        <div>
-            <p>
-                <span>{r.song.title}</span><span>by {r.song.artist}</span><br
-                /><span>({r.requestor})</span>
-            </p>
-        </div>
-    {/each}
+    <div class="max-h-[50vh] overflow-x-auto">
+        {#each rest as r}
+            <SongDisplay song={r.song} />
+            <p class="italic text-right text-gray-500">({r.requestor})</p>
+        {/each}
+    </div>
 </div>
