@@ -16,7 +16,7 @@ COPY . .
 RUN yarn install --locked
 
 # Build SvelteKit app
-RUN yarn run build
+RUN yarn build
 
 
 # The USER instruction sets the user name to use as the default user for the remainder of the current stage
