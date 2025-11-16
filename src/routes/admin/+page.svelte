@@ -10,7 +10,7 @@
     };
 </script>
 
-<div class="p-3 w-1/2 mx-auto">
+<div class="p-3 md:w-1/2 mx-auto">
     <H1 class="mx-auto pb-6 w-full text-center">Warteschlangen Admin</H1>
 
     <div class="bg-white rounded-2xl w-fit mx-auto p-1">

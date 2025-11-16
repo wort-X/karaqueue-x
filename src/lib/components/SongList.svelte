@@ -71,7 +71,7 @@
 
 <div>
     <table
-        class="rounded-[1.4rem] bg-white border-collapse w-fit max-w-4/5 mx-auto"
+        class="rounded-[1.4rem] bg-white border-collapse w-fit md:max-w-4/5 mx-auto"
     >
         <thead class="bg-[#fda085] text-white text-2xl text-left p-2">
             <tr>
@@ -84,18 +84,20 @@
         </thead>
         <tbody>
             {#each songObj.songs as song}
-                <tr class="text-lg h-12">
+                <tr onclick={() => openModal(song)} class="text-lg">
                     <td
                         ><img
-                            class="w-12 m-2 rounded-sm"
+                            class="w-12 m-2 rounded-sm hidden md:inline"
                             src="/api/songs/cover/{song.cover_image}"
                             alt=" "
                         /></td
                     >
                     <td class="pl-2">{song.title}</td>
                     <td class="pl-2">{song.artist}</td>
-                    <td class="pl-2">{make_duration_format(song.duration)}</td>
-                    <td
+                    <td class="pl-2 text-center"
+                        >{make_duration_format(song.duration)}</td
+                    >
+                    <td class="hidden md:inline"
                         ><button
                             class="prim cursor-pointer px-1 py-2 rounded-2xl text-white text-xl mx-1 my-1"
                             onclick={() => openModal(song)}>Add to queue</button
