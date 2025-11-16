@@ -19,8 +19,14 @@ RUN yarn install --locked
 RUN yarn build
 
 
+FROM node:lts-slim AS runner
+
+WORKDIR /build
+
+COPY --from=external-website /app/build .
+
 # The USER instruction sets the user name to use as the default user for the remainder of the current stage
 USER node:node
 
 # This is the command that will be run inside the image when you tell Docker to start the container
-CMD ["node","build/index.js"]
+CMD ["node","index.js"]
