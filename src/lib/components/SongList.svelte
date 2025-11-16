@@ -75,6 +75,7 @@
     >
         <thead class="bg-[#fda085] text-white text-2xl text-left p-2">
             <tr>
+                <th class="pl-2"></th>
                 <th class="pl-2">Title</th>
                 <th class="pl-2">Artist</th>
                 <th class="pl-2">Duration</th>
@@ -84,6 +85,13 @@
         <tbody>
             {#each songObj.songs as song}
                 <tr class="text-lg h-12">
+                    <td
+                        ><img
+                            class="w-12 m-2 rounded-sm"
+                            src="/api/songs/cover/{song.cover_image}"
+                            alt=" "
+                        /></td
+                    >
                     <td class="pl-2">{song.title}</td>
                     <td class="pl-2">{song.artist}</td>
                     <td class="pl-2">{make_duration_format(song.duration)}</td>

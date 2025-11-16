@@ -11,7 +11,7 @@
 
         setInterval(async () => {
             queue = await (await fetch("/api/queue")).json();
-        }, 500);
+        }, 1000);
     });
 
     const currently = $derived(queue.length == 0 ? null : queue[0]);

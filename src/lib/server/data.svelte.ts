@@ -13,14 +13,14 @@ export type TSong = {
 
 export type TSongs = TSong[];
 
-let songData: TSongs | undefined = undefined;
+let songData: TSongs;
 
 const songs = async () => {
   if (songData === undefined) {
     let songsRaw = await fs.readFile(env.SONG_FILE!, "utf-8");
     songData = JSON.parse(songsRaw);
   }
-  return songData!;
+  return songData;
 };
 
 export const getSongs = async (config: {
