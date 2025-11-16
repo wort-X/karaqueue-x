@@ -1,11 +1,14 @@
 <script lang="ts">
     import "../app.css";
-    import favicon from "$lib/assets/favicon.svg";
+    import favicon from "$lib/assets/favicon.png";
 
     let { children } = $props();
 </script>
 
 <svelte:head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Karaque</title>
     <link rel="icon" href={favicon} />
 </svelte:head>
 
