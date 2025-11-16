@@ -18,8 +18,6 @@ RUN yarn install --locked
 # Build SvelteKit app
 RUN yarn run build
 
-# Delete source code files that were used to build the app that are no longer needed
-RUN rm -rf src/ static/ emailTemplates/ docker-compose.yml
 
 # The USER instruction sets the user name to use as the default user for the remainder of the current stage
 USER node:node
