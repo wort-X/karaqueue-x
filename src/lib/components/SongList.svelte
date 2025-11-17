@@ -109,18 +109,26 @@
         </tbody>
     </table>
     <div
-        class="grid grid-cols-3 w-fit gap-2 mx-auto my-2 text-center bg-white p-4 rounded-2xl"
+        class="grid grid-cols-5 w-fit gap-2 mx-auto my-2 text-center bg-white p-4 rounded-2xl"
     >
+        <button
+            class="cursor-pointer hover:bg-gray-300 px-2 py-1 rounded-2xl transition-all"
+            onclick={() => (page = 0)}>Start</button
+        >
         <button
             class="cursor-pointer hover:bg-gray-300 px-2 py-1 rounded-2xl transition-all"
             onclick={() => page--}>Previous</button
         >
-        <span>
+        <span class="my-auto">
             {page + 1}/{songObj.pages}
         </span>
         <button
             class="cursor-pointer hover:bg-gray-300 px-2 py-1 rounded-2xl transition-all"
             onclick={() => page++}>Next</button
+        >
+        <button
+            class="cursor-pointer hover:bg-gray-300 px-2 py-1 rounded-2xl transition-all"
+            onclick={() => (page = songObj.pages - 1)}>End</button
         >
     </div>
 
@@ -136,7 +144,7 @@
         <input
             type="text"
             class=" mt-4 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block min-w-2/3 p-2.5 mx-auto"
-            value={nick}
+            bind:value={nick}
         />
 
         <button
