@@ -87,6 +87,7 @@
                 <tr onclick={() => openModal(song)} class="text-lg">
                     <td
                         ><img
+                            loading="lazy"
                             class="w-12 m-2 rounded-sm hidden md:inline"
                             src="/api/songs/cover/{song.cover_image}"
                             alt=" "
