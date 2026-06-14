@@ -23,7 +23,7 @@
 
     // --- Logging helper ---
     function addLog(type: "info" | "warn" | "error", msg: string) {
-        log = [{ type, msg }, ...log];
+        log = [{ type, msg }, ...log.slice(0, Math.min(log.length, 100))];
     }
 
     // --- Directory pickers ---
