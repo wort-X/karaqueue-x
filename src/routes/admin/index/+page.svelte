@@ -354,7 +354,7 @@
         try {
             await fetch("/api/songs/cover/clear", {
                 method: "DELETE",
-                headers: { QUEUE_AUTH: adminPWD },
+                headers: { "QUEUE-AUTH": adminPWD },
             });
 
             const coverIndex = { value: 0 };
@@ -410,7 +410,7 @@
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    QUEUE_AUTH: adminPWD,
+                    "QUEUE-AUTH": adminPWD,
                 },
                 body: JSON.stringify({ covers }),
             });
@@ -437,7 +437,7 @@
         await fetch("/api/songs", {
             body: JSON.stringify(songs),
             method: "POST",
-            headers: { QUEUE_AUTH: adminPWD },
+            headers: { "QUEUE-AUTH": adminPWD },
         });
     }
 
