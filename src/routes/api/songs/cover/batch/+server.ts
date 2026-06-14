@@ -11,6 +11,8 @@ interface CoverEntry {
 
 export const POST: RequestHandler = async ({ request }) => {
   const { covers } = (await request.json()) as { covers: CoverEntry[] };
+  let pwd = request.headers.get("QUEUE-AUTH");
+  if (pwd !== env.ADMIN_PASSWORD) return json({ status: "fail" });
 
   await Promise.all(
     covers.map(({ name, data }) => {

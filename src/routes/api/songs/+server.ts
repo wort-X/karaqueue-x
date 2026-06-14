@@ -1,3 +1,4 @@
+import { env } from "$env/dynamic/private";
 import { getSongs, writeSongs, type TSongs } from "$lib/server/data.svelte";
 import { json, type Actions, type RequestHandler } from "@sveltejs/kit";
 
@@ -16,6 +17,8 @@ export const GET: RequestHandler = async ({ url }) => {
 };
 
 export const POST: RequestHandler = async ({ request }) => {
+  let pwd = request.headers.get("QUEUE-AUTH");
+  if (pwd !== env.ADMIN_PASSWORD) return json({ status: "fail" });
   let songs: TSongs = await request.json();
   await writeSongs(songs);
   return json({ status: "ok" });

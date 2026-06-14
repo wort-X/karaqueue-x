@@ -6,6 +6,8 @@ import { json } from "@sveltejs/kit";
 
 export const DELETE: RequestHandler = async ({ params, request }) => {
 
+  let pwd = request.headers.get("QUEUE-AUTH");
+  if (pwd !== env.ADMIN_PASSWORD) return json({ status: "fail" });
 
   for (const f of await fs.readdir(env.COVER_DIR)) {
     if (f == "." || f == "..") continue;

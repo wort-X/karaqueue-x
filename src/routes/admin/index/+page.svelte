@@ -1,6 +1,4 @@
 <script lang="ts">
-    import { onMount } from "svelte";
-
     interface Song {
         title: string;
         artist: string[];
@@ -22,6 +20,7 @@
     let uploadCovers = $state(false);
     let pendingUploads: Array<{ name: string; file: File }> = [];
     let batchSize = $state(10);
+    let adminPWD = $state("");
 
     // --- Logging helper ---
     function addLog(type: "info" | "warn" | "error", msg: string) {
@@ -353,7 +352,10 @@
         uploadCovers = true;
         pendingUploads = [];
         try {
-            await fetch("/api/songs/cover/clear", { method: "DELETE" });
+            await fetch("/api/songs/cover/clear", {
+                method: "DELETE",
+                headers: { QUEUE_AUTH: adminPWD },
+            });
 
             const coverIndex = { value: 0 };
             const allSongs: Song[] = [];
@@ -406,7 +408,10 @@
             );
             await fetch("/api/songs/cover/batch", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    QUEUE_AUTH: adminPWD,
+                },
                 body: JSON.stringify({ covers }),
             });
             addLog(
@@ -432,6 +437,7 @@
         await fetch("/api/songs", {
             body: JSON.stringify(songs),
             method: "POST",
+            headers: { QUEUE_AUTH: adminPWD },
         });
     }
 
@@ -588,6 +594,19 @@
                 />
                 <span class="action-hint"
                     >Batch Size (number of images to bundle while uploading)</span
+                >
+            </div>
+        </div>
+        <div class="action-row mt-1">
+            <div class="action-block">
+                <input
+                    type="password"
+                    class="action-btn primary"
+                    bind:value={adminPWD}
+                />
+                <span class="action-hint"
+                    >Admin Password. Needed when uploading to server. Will fail
+                    if not correct.</span
                 >
             </div>
         </div>

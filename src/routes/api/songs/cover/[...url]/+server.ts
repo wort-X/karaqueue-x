@@ -17,13 +17,3 @@ export const GET: RequestHandler = async ({ params }) => {
 
   return new Response(file);
 };
-
-export const POST: RequestHandler = async ({ params, request }) => {
-  let p = path.join(env.COVER_DIR, params.url);
-
-  let data = Buffer.from(await request.text(), 'base64');
-
-  fs.writeFile(p, data);
-
-  return json({ status: "ok" });
-}
