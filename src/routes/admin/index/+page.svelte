@@ -109,12 +109,12 @@
 
     async function copyFileToDir(
         srcHandle: FileSystemFileHandle,
-        destDir: FileSystemDirectoryHandle,
+        destDir: FileSystemDirectoryHandle | null,
         destName: string,
     ) {
         const file = await srcHandle.getFile();
         if (uploadCovers) {
-            fetch(`/api/songs/cover/${destName}`, {
+            await fetch(`/api/songs/cover/${destName}`, {
                 body: btoa(
                     String.fromCharCode(
                         ...new Uint8Array(await file.arrayBuffer()),
@@ -122,9 +122,8 @@
                 ),
                 method: "POST",
             });
-            console.log(file);
         } else {
-            const destHandle = await destDir.getFileHandle(destName, {
+            const destHandle = await destDir!.getFileHandle(destName, {
                 create: true,
             });
             const writable = await (destHandle as any).createWritable();
@@ -186,7 +185,7 @@
                         );
                         break;
                     case "COVER":
-                        if (coverDir) {
+                        if (coverDir || uploadCovers) {
                             const coverName = value.trim();
                             const ext = coverName.split(".").pop() ?? "";
                             const destName = `cover-${coverIndex.value}.${ext}`;
@@ -357,6 +356,8 @@
         log = [];
         uploadCovers = true;
         try {
+            await fetch("/api/songs/cover/clear", { method: "DELETE" });
+
             const coverIndex = { value: 0 };
             const allSongs: Song[] = [];
             for (const dir of songDirs) {
