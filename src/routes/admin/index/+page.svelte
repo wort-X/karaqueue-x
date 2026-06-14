@@ -20,6 +20,7 @@
     let processing = $state(false);
     let done = $state(false);
     let uploadCovers = $state(false);
+    let pendingUploads: Array<{ name: string; file: File }> = [];
 
     // --- Logging helper ---
     function addLog(type: "info" | "warn" | "error", msg: string) {
@@ -114,14 +115,8 @@
     ) {
         const file = await srcHandle.getFile();
         if (uploadCovers) {
-            await fetch(`/api/songs/cover/${destName}`, {
-                body: btoa(
-                    String.fromCharCode(
-                        ...new Uint8Array(await file.arrayBuffer()),
-                    ),
-                ),
-                method: "POST",
-            });
+            // Collect the file for batched upload later
+            pendingUploads.push({ name: destName, file });
         } else {
             const destHandle = await destDir!.getFileHandle(destName, {
                 create: true,
@@ -355,6 +350,7 @@
         done = false;
         log = [];
         uploadCovers = true;
+        pendingUploads = [];
         try {
             await fetch("/api/songs/cover/clear", { method: "DELETE" });
 
@@ -364,6 +360,9 @@
                 const found = await parseFolder(dir, coverIndex);
                 allSongs.push(...found);
             }
+
+            // Upload all collected covers in batches of 10
+            await flushCoverUploads(100);
 
             const deduped = deduplicate(allSongs);
             await uploadLibrary(deduped);
@@ -378,6 +377,44 @@
         processing = false;
         done = true;
         uploadCovers = false;
+    }
+
+    function sleep(ms: number) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function flushCoverUploads(chunkSize = 10) {
+        const total = pendingUploads.length;
+        if (total === 0) return;
+        addLog(
+            "info",
+            `Uploading ${total} cover image(s) in chunks of ${chunkSize}…`,
+        );
+        for (let i = 0; i < total; i += chunkSize) {
+            const chunk = pendingUploads.slice(i, i + chunkSize);
+            const covers = await Promise.all(
+                chunk.map(async ({ name, file }) => {
+                    const bytes = new Uint8Array(await file.arrayBuffer());
+                    // Build base64 in chunks to avoid call-stack limits on large images
+                    let binary = "";
+                    for (let j = 0; j < bytes.length; j++) {
+                        binary += String.fromCharCode(bytes[j]);
+                    }
+                    return { name, data: btoa(binary) };
+                }),
+            );
+            await fetch("/api/songs/cover/batch", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ covers }),
+            });
+            addLog(
+                "info",
+                `Covers ${i + 1}–${Math.min(i + chunkSize, total)} of ${total} uploaded.`,
+            );
+            await sleep(200);
+        }
+        pendingUploads = [];
     }
 
     async function writeLibrary(songs: Song[]) {
