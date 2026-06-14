@@ -21,6 +21,7 @@
     let done = $state(false);
     let uploadCovers = $state(false);
     let pendingUploads: Array<{ name: string; file: File }> = [];
+    let batchSize = $state(10);
 
     // --- Logging helper ---
     function addLog(type: "info" | "warn" | "error", msg: string) {
@@ -362,7 +363,7 @@
             }
 
             // Upload all collected covers in batches of 10
-            await flushCoverUploads(100);
+            await flushCoverUploads(batchSize);
 
             const deduped = deduplicate(allSongs);
             await uploadLibrary(deduped);
@@ -559,7 +560,7 @@
                 >
             </div>
         </div>
-        <div class="actions-row mt-1">
+        <div class="action-row mt-1">
             <div class="action-block">
                 <button
                     class="action-btn primary"
@@ -576,6 +577,17 @@
                     >Scans all sources and overwrites the servers<code
                         >library.json</code
                     > and cover images</span
+                >
+            </div>
+            <div class="divider-v"></div>
+            <div class="action-block">
+                <input
+                    type="number"
+                    class="action-btn primary"
+                    bind:value={batchSize}
+                />
+                <span class="action-hint"
+                    >Batch Size (number of images to bundle while uploading)</span
                 >
             </div>
         </div>
