@@ -2,6 +2,7 @@ import type { RequestHandler } from "../../../queue/$types";
 import { env } from "$env/dynamic/private";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { json } from "@sveltejs/kit";
 
 export const GET: RequestHandler = async ({ params }) => {
   let file;
@@ -16,3 +17,13 @@ export const GET: RequestHandler = async ({ params }) => {
 
   return new Response(file);
 };
+
+export const POST: RequestHandler = async ({ params, request }) => {
+  let p = path.join(env.COVER_DIR, params.url);
+
+  let data = Buffer.from(await request.text(), 'base64');
+
+  fs.writeFile(p, data);
+
+  return json({ status: "ok" });
+}

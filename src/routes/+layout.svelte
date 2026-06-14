@@ -12,7 +12,7 @@
     <link rel="icon" href={favicon} />
 </svelte:head>
 
-<main class="w-lvw h-lvh">
+<main class="w-lvw min-h-lvh">
     {@render children()}
 </main>
 
