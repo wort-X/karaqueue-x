@@ -393,12 +393,33 @@
             "info",
             `Uploading ${total} cover image(s) in chunks of ${chunkSize}…`,
         );
+
         for (let i = 0; i < total; i += chunkSize) {
             const chunk = pendingUploads.slice(i, i + chunkSize);
-            const covers = await Promise.all(
-                chunk.map(async ({ name, file }) => {
+            await uploadChunkWithRetry(chunk, i, total);
+            await sleep(200);
+        }
+        pendingUploads = [];
+    }
+
+    async function uploadChunkWithRetry(
+        chunk: {
+            name: string;
+            file: File;
+        }[],
+        offset: number,
+        total: number,
+        minChunkSize = 1,
+    ) {
+        const encodeCovers = async (
+            items: {
+                name: string;
+                file: File;
+            }[],
+        ) =>
+            Promise.all(
+                items.map(async ({ name, file }) => {
                     const bytes = new Uint8Array(await file.arrayBuffer());
-                    // Build base64 in chunks to avoid call-stack limits on large images
                     let binary = "";
                     for (let j = 0; j < bytes.length; j++) {
                         binary += String.fromCharCode(bytes[j]);
@@ -406,7 +427,16 @@
                     return { name, data: btoa(binary) };
                 }),
             );
-            await fetch("/api/songs/cover/batch", {
+
+        const uploadBatch = async (
+            items: {
+                name: string;
+                file: File;
+            }[],
+            batchOffset: number,
+        ) => {
+            const covers = await encodeCovers(items);
+            const response = await fetch("/api/songs/cover/batch", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -414,13 +444,42 @@
                 },
                 body: JSON.stringify({ covers }),
             });
+
+            if (!response.ok) {
+                const isTooLarge =
+                    response.status === 413 ||
+                    (response.status === 400 &&
+                        (await response.text())
+                            .toLowerCase()
+                            .includes("too large"));
+
+                if (isTooLarge && items.length > minChunkSize) {
+                    const half = Math.ceil(items.length / 2);
+                    const left = items.slice(0, half);
+                    const right = items.slice(half);
+                    addLog(
+                        "warn",
+                        `Chunk too large (${items.length} items) — retrying as two halves of ${left.length} + ${right.length}…`,
+                    );
+                    await uploadBatch(left, batchOffset);
+                    await sleep(100);
+                    await uploadBatch(right, batchOffset + left.length);
+                    return;
+                }
+
+                throw new Error(
+                    `Upload failed (HTTP ${response.status}) for items at offset ${batchOffset}`,
+                );
+            }
+
+            const end = Math.min(batchOffset + items.length, total);
             addLog(
                 "info",
-                `Covers ${i + 1}–${Math.min(i + chunkSize, total)} of ${total} uploaded.`,
+                `Covers ${batchOffset + 1}–${end} of ${total} uploaded.`,
             );
-            await sleep(200);
-        }
-        pendingUploads = [];
+        };
+
+        await uploadBatch(chunk, offset);
     }
 
     async function writeLibrary(songs: Song[]) {
