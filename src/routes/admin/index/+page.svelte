@@ -467,7 +467,8 @@
                     return;
                 }
 
-                throw new Error(
+                addLog(
+                    "error",
                     `Upload failed (HTTP ${response.status}) for items at offset ${batchOffset}`,
                 );
             }
