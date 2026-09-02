@@ -19,7 +19,7 @@
 </script>
 
 <div class="mx-auto bg-white rounded-3xl p-5 max-h-full">
-    <H2 class="text-center">Curently playing</H2>
+    <H2 class="text-center">Currently playing</H2>
 
     {#if currently == null}
         <p class="text-center">Currently no song is queued</p>
