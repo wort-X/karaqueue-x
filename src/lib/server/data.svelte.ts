@@ -69,25 +69,33 @@ const make_filter = (filter: string | null) => {
   };
 };
 
-export type SongQueue = {
+export type SongRequest = {
   song: TSong;
   requestor: string;
-}[];
+}
 
-let queue: SongQueue = $state([]);
+export type SongQueue = {
+  song_requests: SongRequest[];
+  // instant as epoch time
+  song_start: number;
+}
+
+let queue: SongQueue = $state({song_requests: [], song_start: new Date().getTime()});
 
 export const getQueue = () => {
   return queue;
 };
 
 export const enqueue = (r: { song: TSong; requestor: string }) => {
-  queue.push(r);
+  queue.song_requests.push(r);
 };
 
 export const dequeueNext = () => {
-  queue.shift();
+  queue.song_requests.shift();
+  queue.song_start = new Date().getTime();
 };
 
 export const clearQueue = () => {
-  queue = [];
+  queue.song_requests = [];
+  queue.song_start = new Date().getTime();
 };
