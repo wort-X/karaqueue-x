@@ -30,8 +30,8 @@
 
     function renderStartTime(duration: number): string {
         const instantOfStart = queue.song_start + duration * 1000;
-        const date_of_start = new Date(instantOfStart);
-        return `${date_of_start.getHours().toString().padStart(2, '0')}:${date_of_start.getMinutes().toString().padStart(2, '0')}`;
+        const dateOfStart = new Date(instantOfStart);
+        return `${dateOfStart.getHours().toString().padStart(2, '0')}:${dateOfStart.getMinutes().toString().padStart(2, '0')}`;
     }
 
     const summedDurations = $derived(deriveTimings(queue.song_requests));
