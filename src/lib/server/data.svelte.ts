@@ -86,7 +86,7 @@ export const getQueue = () => {
   return queue;
 };
 
-export const enqueue = (r: { song: TSong; requestor: string }) => {
+export const enqueue = (r: SongRequest) => {
   queue.song_requests.push(r);
   // Assume, we are starting now, if the first song is queued.
   if (!queue.song_requests) {

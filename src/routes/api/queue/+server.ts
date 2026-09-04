@@ -2,7 +2,7 @@ import {
   clearQueue,
   dequeueNext,
   enqueue,
-  getQueue,
+  getQueue, type SongRequest,
   type TSong,
 } from "$lib/server/data.svelte";
 import { json, type RequestHandler } from "@sveltejs/kit";
@@ -24,7 +24,7 @@ export const DELETE: RequestHandler = async ({ url, request }) => {
 };
 
 export const POST: RequestHandler = async ({ url, request }) => {
-  let r: { song: TSong; requestor: string } = await request.json();
+  let r: SongRequest = await request.json();
   enqueue(r);
   return json(getQueue());
 };
