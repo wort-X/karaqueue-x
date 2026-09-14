@@ -4,14 +4,10 @@
     import H2 from "./H2.svelte";
     import SongDisplay from "./SongDisplay.svelte";
 
-    function make_duration_format(seconds: number): string {
-        let minutes = 0;
-        while (seconds >= 60) {
-            minutes++;
-            seconds -= 60;
-        }
-
-        return `${minutes}:${seconds}`;
+    function formatDuration(seconds: number): string {
+        const m = Math.floor(seconds / 60);
+        const s = Math.floor((seconds % 60)).toString().padStart(2, '0');
+        return `${m}:${s}`;
     }
 
     let { filter }: { filter: string } = $props();
@@ -96,7 +92,7 @@
                     <td class="pl-2">{song.title}</td>
                     <td class="pl-2">{song.artist}</td>
                     <td class="pl-2 text-center"
-                        >{make_duration_format(song.duration)}</td
+                        >{formatDuration(song.duration)}</td
                     >
                     <td class="hidden md:inline"
                         ><button
